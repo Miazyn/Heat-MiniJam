@@ -52,12 +52,11 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ValueChange());
         StartCoroutine(TimePassing());
     }
-
     IEnumerator TimePassing()
     {
         yield return new WaitForSeconds(5f);
         scorePts += 5;
-        scoreTxt.text = scorePts + " pts";
+        UpdateScore();
 
         if (!gameOver)
         {
@@ -122,4 +121,19 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game Over");
     }
 
+    public bool GetGameOverStatus()
+    {
+        return gameOver;
+    }
+
+    public void AddScorePts(int pts)
+    {
+        scorePts += pts;
+        UpdateScore();
+    }
+
+    private void UpdateScore()
+    {
+        scoreTxt.text = scorePts + " pts";
+    }
 }

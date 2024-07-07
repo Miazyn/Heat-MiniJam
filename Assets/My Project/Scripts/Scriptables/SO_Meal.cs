@@ -6,6 +6,7 @@ public class SO_Meal : ScriptableObject
 {
     public string Name;
     public SO_Ingredient[] ingredients;
+    public int points;
 }
     
 
