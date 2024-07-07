@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 421c6918c2513754994e1117a93a158c, type: 3}
+  m_Name: Vanilla Ice
+  m_EditorClassIdentifier: 
+  Name: Vanilla Icecream
+  ingredients:
+  - {fileID: 11400000, guid: 7008056056c2b0544a22823039c4ab1d, type: 2}
+  - {fileID: 11400000, guid: 984f92dae9355484ca381f257b8d5e61, type: 2}

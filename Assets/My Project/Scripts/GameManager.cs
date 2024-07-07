@@ -2,23 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    private float waitTime = 1f;
+    private int timePassed = 0;
+
     [SerializeField]
-    private Slider bodySlider, temperatureSlider, fireSlider;
+    private TextMeshProUGUI scoreTxt;
+    private int scorePts = 0;
 
-    private float temperatureIncrease = 0.1f;
+    [SerializeField]
+    private Image fanButton;
+    private Color activeFan, unactiveFan;
 
-    private float bodyDecrease = 1f;
-    private float bodyIncrease = 0.05f;
+    private bool fanActive = false;
 
-    private float fireIncrease = 20f;
-    private float fireDecrease = 0.5f;
-
-    private float waitTime = 5f;
+    private bool gameOver = false;
 
     private void Awake()
     {
@@ -33,49 +36,90 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public delegate void OnValueChange();
+    public OnValueChange onValueChangeCallback;
+
+    public delegate void OnFanBody();
+    public OnFanBody onFanBodyCallback;
+    public delegate void OnFanFire();
+    public OnFanFire onFanFireCallback;
+
     private void Start()
     {
-        bodySlider.value = bodySlider.minValue;
-        temperatureSlider.value = temperatureSlider.minValue;
-        fireSlider.value = fireSlider.maxValue;
+        activeFan = Color.blue;
+        unactiveFan = Color.white;
 
         StartCoroutine(ValueChange());
+        StartCoroutine(TimePassing());
+    }
+
+    IEnumerator TimePassing()
+    {
+        yield return new WaitForSeconds(5f);
+        scorePts += 5;
+        scoreTxt.text = scorePts + " pts";
+
+        if (!gameOver)
+        {
+            StartCoroutine(TimePassing());
+        }
     }
 
     IEnumerator ValueChange()
     {
-        Debug.Log("Values are changing.");
-        IncreaseTemperature();
-        IncreaseBodyTemperatur();
-        DecreaseFire();
+        if (timePassed < 50)
+        {
+            timePassed++;
+            if (timePassed % 5 == 0)
+            {
+                Debug.Log("Time speed up");
+                waitTime -= 0.09f;
+            }
+        }
+        onValueChangeCallback?.Invoke();
         yield return new WaitForSeconds(waitTime);
-        StartCoroutine(ValueChange());
+        if(!gameOver)
+        {
+            StartCoroutine(ValueChange());
+        }
     }
 
-    private void IncreaseBodyTemperatur()
+    public void Fan()
     {
-        bodySlider.value += bodyIncrease;
+        fanActive = !fanActive;
+        if(fanButton == null) { return; }
+        if (fanActive)
+        {
+            fanButton.color = activeFan;
+        }
+        else
+        {
+            fanButton.color = unactiveFan;
+        }
     }
 
-    private void IncreaseTemperature()
+    public void CoolBody()
     {
-        Debug.Log("TEMP increase");
-        temperatureSlider.value += temperatureIncrease;
+        if (!fanActive) { return; }
+        if (gameOver) { return; }
+
+        onFanBodyCallback?.Invoke();
     }
 
-    private void IncreaseFire()
+    public void HeatFire()
     {
-        temperatureSlider.value += fireIncrease;
+        if (!fanActive) { return; }
+        if(gameOver) { return; }
+
+        onFanFireCallback?.Invoke();
+        
     }
 
-    private void DecreaseFire()
+    public void GameOver()
     {
-        temperatureSlider.value -= fireDecrease;
-    }
-
-    private void DecreaseBodyTemperature()
-    {
-        bodySlider.value -= bodyDecrease;
+        gameOver = true;
+        StopCoroutine(ValueChange());
+        Debug.Log("Game Over");
     }
 
 }
